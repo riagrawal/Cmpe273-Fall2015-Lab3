@@ -19,15 +19,21 @@ type Response struct{
 func main(){
 	//server 1 code
 	key_value = make(map[int] string)
-	mux1 := httprouter.New()
+
+	go func(){
+	mux1 := httprouter.New()	
     mux1.PUT("/keys/:id/:value",put)
     mux1.GET("/keys/:id",get)
     mux1.GET("/keys",getall)
-    server1 := http.Server{
+    server := http.Server{
             Addr:        "0.0.0.0:3000",
             Handler: mux1,
     }
-    server1.ListenAndServe()
+    server.ListenAndServe()
+	}()
+    
+
+    go func(){
     mux2 := httprouter.New()
     mux2.PUT("/keys/:id/:value",put)
     mux2.GET("/keys/:id",get)
@@ -37,7 +43,9 @@ func main(){
             Handler: mux2,
     }
     server2.ListenAndServe()
-    mux3 := httprouter.New()
+    }()
+
+  	mux3 := httprouter.New()
     mux3.PUT("/keys/:id/:value",put)
     mux3.GET("/keys/:id",get)
     mux3.GET("/keys",getall)
@@ -47,7 +55,9 @@ func main(){
     }
     server3.ListenAndServe()
 
+
 }
+
 
 func put(rw http.ResponseWriter, req *http.Request, p httprouter.Params){
 	log.Println("Inside Put!!")
