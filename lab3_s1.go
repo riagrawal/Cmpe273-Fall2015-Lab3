@@ -18,31 +18,35 @@ type Response struct{
 
 func main(){
 	//server 1 code
-	/*server := rpc.NewServer()
-	server.Register(cal)
-	server.HandleHTTP(rpc.DefaultRPCPath, rpc.DefaultDebugPath)
-	listener, e := net.Listen("tcp", ":3000")
-	if e != nil {
-		log.Fatal("listen error:", e)
-	}
-	for {
-		if conn, err := listener.Accept(); err != nil {
-			log.Fatal("accept error: " + err.Error())
-		} else {
-			log.Printf("new connection established\n")
-			go server.ServeCodec(jsonrpc.NewServerCodec(conn))
-		}
-	}*/
 	key_value = make(map[int] string)
-	mux := httprouter.New()
-    mux.PUT("/keys/:id/:value",put)
-    mux.GET("/keys/:id",get)
-    mux.GET("/keys",getall)
-    server := http.Server{
+	mux1 := httprouter.New()
+    mux1.PUT("/keys/:id/:value",put)
+    mux1.GET("/keys/:id",get)
+    mux1.GET("/keys",getall)
+    server1 := http.Server{
             Addr:        "0.0.0.0:3000",
-            Handler: mux,
+            Handler: mux1,
     }
-    server.ListenAndServe()
+    server1.ListenAndServe()
+    mux2 := httprouter.New()
+    mux2.PUT("/keys/:id/:value",put)
+    mux2.GET("/keys/:id",get)
+    mux2.GET("/keys",getall)
+    server2 := http.Server{
+            Addr:        "0.0.0.0:3001",
+            Handler: mux2,
+    }
+    server2.ListenAndServe()
+    mux3 := httprouter.New()
+    mux3.PUT("/keys/:id/:value",put)
+    mux3.GET("/keys/:id",get)
+    mux3.GET("/keys",getall)
+    server3 := http.Server{
+            Addr:        "0.0.0.0:3002",
+            Handler: mux3,
+    }
+    server3.ListenAndServe()
+
 }
 
 func put(rw http.ResponseWriter, req *http.Request, p httprouter.Params){
