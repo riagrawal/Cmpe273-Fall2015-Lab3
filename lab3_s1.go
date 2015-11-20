@@ -72,10 +72,15 @@ func get(rw http.ResponseWriter, req *http.Request, p httprouter.Params){
 
 func getall(rw http.ResponseWriter, req *http.Request, p httprouter.Params){
 	log.Println("Inside GETALL!!")
-	key_int, _ := strconv.Atoi(key)
-	var response Response
-    response.Key = key_int
-    response.Value = key_value[key_int]
+	var response []Response
+	var key_pair Response
+	for key, value := range key_value {
+    	//fmt.Println("Key:", key, "Value:", value)
+    	key_pair.Key = key
+    	key_pair.Value = value
+		response = append(response, key_pair)
+	}
+    
   	payload, err := json.Marshal(response)  
   	if err != nil {
     	 http.Error(rw,"Bad Request" , http.StatusInternalServerError)
