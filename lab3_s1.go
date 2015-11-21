@@ -89,7 +89,6 @@ func getall(rw http.ResponseWriter, req *http.Request, p httprouter.Params){
 	var response []Response
 	var key_pair Response
 	for key, value := range key_value {
-    	//fmt.Println("Key:", key, "Value:", value)
     	key_pair.Key = key
     	key_pair.Value = value
 		response = append(response, key_pair)
