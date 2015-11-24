@@ -7,6 +7,7 @@ import (
     "strconv"
     "fmt"
     "os"
+    "strings"
     //"encoding/json"
     //"bytes"
 )
@@ -32,6 +33,7 @@ func main(){
 	}
 
 	if(len(os.Args)==2){
+
 		url := fmt.Sprintf("http://localhost:3000/keys")
 		get, err := http.Get(url)
 		if err != nil {
@@ -40,9 +42,10 @@ func main(){
 		data, err := ioutil.ReadAll(get.Body)
 		get.Body.Close()
 		log.Println("Key Value pairs are  : ", string(data))
-	}else if os.Args[1]== "get" {
-		key := os.Args[2]
-		key_integer,_ := strconv.Atoi(key)
+	}else if os.Args[1]== "GET" {
+		request_string := os.Args[2]
+		key := strings.Split(request_string,"/")
+		key_integer,_ := strconv.Atoi(key[2])
 		hash = key_integer % 3
 		if(hash == 0){
 			port = "3000"
@@ -51,7 +54,7 @@ func main(){
 		}else {
 			port = "3002"
 		}
-		url := fmt.Sprintf("http://localhost:%s/keys/%s",port,key)
+		url := fmt.Sprintf("http://localhost:%s/keys/%s",port,key[2])
 		get_key, err := http.Get(url)
 		if err != nil {
 			log.Fatal(err)
@@ -60,9 +63,9 @@ func main(){
 		get_key.Body.Close()
 		log.Println("Key Value pairs are  : ", string(data))
 	}else{
-		key_put := os.Args[2]
-		value := os.Args[3]
-		key_int,_ := strconv.Atoi(key_put)
+		req_string := os.Args[2]
+		key_put := strings.Split(req_string,"/")
+		key_int,_ := strconv.Atoi(key_put[2])
 		hash = key_int % 3
 		if(hash == 0){
 			port = "3000"
@@ -71,7 +74,7 @@ func main(){
 		}else {
 			port = "3002"
 		}
-		put_url:= fmt.Sprintf("http://localhost:%s/keys/%s/%s",port,key_put,value)
+		put_url:= fmt.Sprintf("http://localhost:%s/keys/%s/%s",port,key_put[2],key_put[3])
 		
 		client := &http.Client{}
 		req, _ := http.NewRequest("PUT", put_url, nil)
